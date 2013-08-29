@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<style>
+		
+		</style>
+		
+		<script language="javascript" type="text/javascript">
+			 function playSound(soundfile) {
+				document.getElementById("dummy").innerHTML=
+				"<embed src=\""+soundfile+"\" hidden=\"true\" autostart=\"true\" loop=\"false\" />";
+				
+			}
+		</script>
+	</head>
+	<body>
+		<span id="dummy"></span>
+		<a href="#" onclick="playSound('sound.ogg');">Sound.ogg</a><br/>
+		<a href="#" onclick="playSound('sound.wav');">Sound.wav</a><br/>
+		<a href="#" onclick="playSound('sound.mp3');">Sound.mp3</a><br/>
+	</body>
+</html>
