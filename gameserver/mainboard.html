@@ -30,19 +30,22 @@
             document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
 
 
-            document.getElementById('mainboard').innerHTML = "<table border=1><tr>";
+           document.getElementById('mainboard').innerHTML = "<div>";
 
             for (i = 0; i < players.length; i++) {
                 var player = players[i];
                 var status = (player.alive) ? "Lever!" : "D&ouml;d";
 
-                var output = '<div style="width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+                //var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+
+                var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+
                 document.getElementById('mainboard').innerHTML += output;
             }
 
-            document.getElementById('mainboard').innerHTML += "</tr></table>";
+            document.getElementById('mainboard').innerHTML += '</div><div style="clear:left;">';
 
-            document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A>";
+            document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A></div>";
 
         });
 
