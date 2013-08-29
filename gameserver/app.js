@@ -6,9 +6,11 @@ var Game =
   Players: [],
   TargetColor: {},
   IntervalId: 0,
+  Tick:0,
   
   ReadyForNewGame: function() // after end game
   {
+    console.log("---------> Ready for new round!!!");
     //Clear data
     clearInterval(Game.IntervalId);
     Game.Players = new Array();
@@ -18,16 +20,28 @@ var Game =
   },
   NewRound: function(client) // all players has connected
   {
-    //Game.ChangePlayerColors();
+    Game.Tick = 0;
+    Game.ChangePlayerColors();
     Game.Update();
   },
   Update: function()
   {
-      console.log("==== update =====");
-      clearInterval(Game.IntervalId);
-      Game.IntervalId = setInterval(function() { Game.Update(); }, 10000);
+      Game.Tick++;
       
-      Game.ChangePlayerColors();
+      
+      var nextTime = 10000 - (500 * Game.Tick);
+      if (nextTime < 4000) {
+        nextTime = 4000;
+      }
+      
+      console.log("==== update ("+Game.Tick+") =====, timeToNext: " + nextTime);
+      
+      clearInterval(Game.IntervalId);
+      Game.IntervalId = setInterval(function() { Game.Update(); }, nextTime);
+      
+      if (Game.Tick % 2 == 0) {
+          Game.ChangePlayerColors();
+      }
       Game.UpdateTarget();
       
   },
@@ -158,9 +172,9 @@ io.sockets.on('connection', function (client) {
   client.on('connectPlayer', function (data) {
     // Log data to the console
     //players.push(data.playername);
-    console.log(Game.InitiateColor);
+    //console.log(Game.InitiateColor);
     Game.Players.push({ id: data.id , name: data.name, color: Game.InitiateColor.hex, alive: true  });
-    console.log(data.id);
+    console.log("Join new player " + data.name + ", with id: " + data.id);
     
     // Sends a message to all connected clients
     Game.EmitPlayerStatus();
@@ -171,7 +185,7 @@ io.sockets.on('connection', function (client) {
     });
     
     client.on('onClick', function (id) {
-      console.log("runs onClick: "+id);
+      console.log("onClick id: "+id);
       Game.CheckTargetColor(id);
     });
 });
