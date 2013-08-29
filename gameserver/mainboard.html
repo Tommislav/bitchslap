@@ -35,7 +35,7 @@
             for (i = 0; i < players.length; i++) {
                 var player = players[i];
                 var status = (player.alive) ? "Lever!" : "D&ouml;d";
-              
+
                 var output = '<div style="width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
                 document.getElementById('mainboard').innerHTML += output;
             }
@@ -45,16 +45,19 @@
             document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A>";
 
         });
+
+
+
+        socket.on('updateMission', function (data) {
+
+            document.getElementById('messagediv').innerHTML = data;
+
+        });
+
     });
 
 
-   /* function send_playerStatus() {
-        /*socket.emit('playerStatus', 
-        { 
-              Players:
-                                     [{id: "123", name: "jonas", color: "#ff0000", alive: true },                                                {id: "123", name: "jon", color: "#00ff00", alive: false }
-         );
-    }*/
+ 
 
     function send_message() {
         var message = document.getElementById('message');
@@ -85,4 +88,6 @@
 
  
 
-<div id="mainboard">...not ready...</div>
+<div id="mainboard">...no players connected...</div>
+
+<div id="messagediv"  style="width:100%; font-size: 24px; ">...game not started...</div> 
