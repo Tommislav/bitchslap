@@ -1,0 +1,4 @@
+var Settings = 
+{
+  ServerUrl : "localhost:8080"
+};
