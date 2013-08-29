@@ -6,6 +6,47 @@ var Game =
   Players: [],
   TargetColor: {},
   IntervalId: 0,
+  
+  ReadyForNewGame: function() // after end game
+  {
+    //Clear data
+    clearInterval(Game.IntervalId);
+    Game.Players = new Array();
+    Game.TargetColor = {};
+    io.sockets.emit('readyForNewGame', "");   
+    
+  },
+  NewRound: function(client) // all players has connected
+  {
+    //Game.ChangePlayerColors();
+    Game.Update();
+  },
+  Update: function()
+  {
+      console.log("==== update =====");
+      clearInterval(Game.IntervalId);
+      Game.IntervalId = setInterval(function() { Game.Update(); }, 10000);
+      
+      Game.ChangePlayerColors();
+      Game.UpdateTarget();
+      
+  },
+  
+  ChangePlayerColors: function()
+  {
+    for(var i = 0; i < Game.Players.length; i++)
+    {
+        console.log(Game.Players[i].alive)
+        if(Game.Players[i].alive)
+        {
+           var index = Math.floor(Math.random() * Game.Colors.length);
+           var newColor = Game.Colors[index].hex;
+           console.log("Player["+i+"].color = " + newColor);
+           Game.Players[i].color = newColor;
+        }
+    }
+  },
+  
   UpdateTarget: function()
   {
     var aliveColors = new Array();
@@ -26,49 +67,26 @@ var Game =
       //WINNER IS'
       clearInterval(Game.IntervalId);
       Game.IntervalId = setInterval(function() { Game.ReadyForNewGame(); }, 10000);
+      console.log("==== Winner is: " + winner.name);
       io.sockets.emit('gameEnd', winner);
     }
     else
     {
        var targetColorIndex = Math.floor(Math.random() * aliveColors.length);
-       console.log("ALIVE COLORS: INDEX "+targetColorIndex + " AND LENGTH "+aliveColors.length);
+       //console.log("ALIVE COLORS: INDEX "+targetColorIndex + " AND LENGTH "+aliveColors.length);
        Game.TargetColor = aliveColors[targetColorIndex];
        
-       console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
-       console.log("TARGET COLOR HEX: "+aliveColors[targetColorIndex].hex);
-       console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
+       //console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
+       //console.log("TARGET COLOR HEX: "+aliveColors[targetColorIndex].hex);
+       //console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
        
+       console.log("====New target color: " + Game.TargetColor.colorName);
        io.sockets.emit('updateMission', {text: "Hunt for color: "+Game.TargetColor.colorName , color: Game.TargetColor.hex});
        Game.EmitPlayerStatus();
-       clearInterval(Game.IntervalId);
-       Game.IntervalId = setInterval(function() { Game.UpdateTarget(); }, 10000);
-       console.log("set interval: 10 000");
     }
     //Endscreen
   },
-  ReadyForNewGame: function()
-  {
-    clearInterval(Game.IntervalId);
-    //Clear data
-    Game.Players = new Array();
-    Game.TargetColor = {};
-    io.sockets.emit('readyForNewGame', "");   
-    
-  },
-  NewRound: function(client)
-  {
-    for(var i = 0; i < Game.Players.length; i++)
-    {
-        console.log(Game.Players[i].alive)
-        if(Game.Players[i].alive)
-        {
-           var index = Math.floor(Math.random() * Game.Colors.length);
-           console.log("GAME.COLORS["+index+"]: "+Game.Colors[index].hex)
-           Game.Players[i].color = Game.Colors[index].hex;
-        }
-    }
-    Game.UpdateTarget();
-  },
+  
   GetColorByHex: function(hex)
   {
     for(var i = 0; i < Game.Colors.length; i++)
@@ -81,20 +99,22 @@ var Game =
   },
   CheckTargetColor: function(id)
   {
+    console.log("Click");
     for(var i = 0; i < Game.Players.length; i++)
     {
         if(Game.Players[i].id == id)
         {
-           console.log("correct id");
            if(Game.Players[i].color == Game.TargetColor.hex)
            {
-              console.log("correct color");
+              console.log("Player died: " + Game.Players[i].name);
+              //console.log("correct color");
               Game.Players[i].alive = false;
               Game.Players[i].color = Game.DeadColor.hex;
-              console.log("Alive? "+Game.Players[i].alive);
+              //console.log("Alive? "+Game.Players[i].alive);
               //Game.EmitPlayerStatus();
-              console.log("clear interval");
-              Game.NewRound();
+              //console.log("clear interval");
+              //Game.NewRound();
+              Game.Update();
            }
         }
     }
@@ -139,7 +159,7 @@ io.sockets.on('connection', function (client) {
     // Log data to the console
     //players.push(data.playername);
     console.log(Game.InitiateColor);
-    Game.Players.push({ id: data.id , name: Game.InitiateColor.colorName, color: Game.InitiateColor.hex, alive: true  });
+    Game.Players.push({ id: data.id , name: data.name, color: Game.InitiateColor.hex, alive: true  });
     console.log(data.id);
     
     // Sends a message to all connected clients
