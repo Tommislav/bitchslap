@@ -24,6 +24,8 @@ io.sockets.on('connection', function (client) {
     //players.push(data.playername);
     console.log(data);
     // Sends a message to all connected clients
-    io.sockets.emit('connectplayer', players);
+    io.sockets.emit('message', data);
+
+
   });
 });
