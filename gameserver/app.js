@@ -9,6 +9,7 @@ var Game =
   
   ReadyForNewGame: function() // after end game
   {
+    console.log("---------> Ready for new round!!!");
     //Clear data
     clearInterval(Game.IntervalId);
     Game.Players = new Array();
@@ -158,9 +159,9 @@ io.sockets.on('connection', function (client) {
   client.on('connectPlayer', function (data) {
     // Log data to the console
     //players.push(data.playername);
-    console.log(Game.InitiateColor);
+    //console.log(Game.InitiateColor);
     Game.Players.push({ id: data.id , name: data.name, color: Game.InitiateColor.hex, alive: true  });
-    console.log(data.id);
+    console.log("Join new player " + data.name + ", with id: " + data.id);
     
     // Sends a message to all connected clients
     Game.EmitPlayerStatus();
@@ -171,7 +172,7 @@ io.sockets.on('connection', function (client) {
     });
     
     client.on('onClick', function (id) {
-      console.log("runs onClick: "+id);
+      console.log("onClick id: "+id);
       Game.CheckTargetColor(id);
     });
 });
