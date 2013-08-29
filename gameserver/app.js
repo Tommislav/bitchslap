@@ -6,6 +6,7 @@ var Game =
   Players: [],
   TargetColor: {},
   IntervalId: 0,
+  Tick:0,
   
   ReadyForNewGame: function() // after end game
   {
@@ -19,16 +20,28 @@ var Game =
   },
   NewRound: function(client) // all players has connected
   {
-    //Game.ChangePlayerColors();
+    Game.Tick = 0;
+    Game.ChangePlayerColors();
     Game.Update();
   },
   Update: function()
   {
-      console.log("==== update =====");
-      clearInterval(Game.IntervalId);
-      Game.IntervalId = setInterval(function() { Game.Update(); }, 10000);
+      Game.Tick++;
       
-      Game.ChangePlayerColors();
+      
+      var nextTime = 10000 - (500 * Game.Tick);
+      if (nextTime < 4000) {
+        nextTime = 4000;
+      }
+      
+      console.log("==== update ("+Game.Tick+") =====, timeToNext: " + nextTime);
+      
+      clearInterval(Game.IntervalId);
+      Game.IntervalId = setInterval(function() { Game.Update(); }, nextTime);
+      
+      if (Game.Tick % 2 == 0) {
+          Game.ChangePlayerColors();
+      }
       Game.UpdateTarget();
       
   },
