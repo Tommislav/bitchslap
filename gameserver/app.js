@@ -82,6 +82,7 @@ var Game =
       clearInterval(Game.IntervalId);
       Game.IntervalId = setInterval(function() { Game.ReadyForNewGame(); }, 10000);
       console.log("==== Winner is: " + winner.name);
+      Game.EmitPlayerStatus(); 
       io.sockets.emit('gameEnd', winner);
     }
     else
