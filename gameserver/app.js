@@ -11,12 +11,12 @@ app.get('/', function (req, res) {
 });
 
 // Called when client connects
-var players = new Array();
+//var players = new Array();
 io.sockets.on('connection', function (client) {
   // Called when receving 'message' from the client
-  client.on('connect', function (data) {
+  client.on('message', function (data) {
     // Log data to the console
-    players.push(data.playername);
+    //players.push(data.playername);
     console.log(data);
     // Sends a message to all connected clients
     io.sockets.emit('connectplayer', players);
