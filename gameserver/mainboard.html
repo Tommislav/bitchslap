@@ -21,8 +21,6 @@
         socket.on('playerStatus', function (data) {
 
 
-            console.log(data);
-
 
             console.log(data);
             // Add the message to the ul list
@@ -30,7 +28,7 @@
             document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
 
 
-           document.getElementById('mainboard').innerHTML = "<div>";
+            document.getElementById('mainboard').innerHTML = "<div>";
 
             for (i = 0; i < players.length; i++) {
                 var player = players[i];
@@ -38,7 +36,7 @@
 
                 //var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
 
-                var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+                var output = '<div style="text-align: center; float: left; width:150; height:150; background-color:' + player.color + ';">' + player.name + '<br>' + status + '&nbsp;</div>';
 
                 document.getElementById('mainboard').innerHTML += output;
             }
@@ -53,7 +51,13 @@
 
         socket.on('updateMission', function (data) {
 
-            document.getElementById('messagediv').innerHTML = data;
+
+            var missionStatement = data.text;
+            var missionColor = data.color;
+
+            document.getElementById('messagediv').innerHTML = missionStatement;
+
+            //document.bgColor = missionColor;
 
         });
 
@@ -108,7 +112,7 @@ div#mainboard
     font-size: 24px;
     color: #ffffff;
     font-family: Verdana;
-    
+     
 }
 
 </style>

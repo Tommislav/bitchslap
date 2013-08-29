@@ -35,12 +35,7 @@
 		</style>
 		
 		<script>
-		    // Hides mobile browser's address bar when page is done loading.
-		    window.addEventListener('load', function (e) {
-		        setTimeout(function () { window.scrollTo(0, 1); }, 1);
-		    }, false);
-
-
+	
 
             var id;
             var myname;
@@ -137,7 +132,8 @@
 
             function joinMe() {
 
-                myname=  document.getElementById('namn').value;
+
+                myname =  document.getElementById('namn').value;
 
                 if (myname !="Your name" && myname != undefined && myname != "")
                     socket.emit('connectPlayer', { "id": id, "name": myname });
@@ -157,7 +153,7 @@
             <div id="register">
                 <form>
                     <input id="namn" type="text" name="namn" value="Your name"/>
-                    <input type=button value="Join" onclick="joinMe();return false;" />
+                    <a href="javascript:joinMe()">Join</a>
                 </form>
             </div>
 
