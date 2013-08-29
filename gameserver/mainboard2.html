@@ -1,0 +1,121 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="/settings.js"></script>
+<script>
+    var socket = io.connect(Settings.ServerUrl);
+
+    // Called when client is connected to server
+    socket.on('connect', function () {
+        // Called when client receives message from server
+        socket.on('message', function (data) {
+
+            // Log to browser console
+            console.log(data);
+            // Add the message to the ul list
+            var li = document.createElement('li');
+            li.innerHTML = data.nick + " says: " + data.message;
+            document.getElementById('chat').appendChild(li);
+
+        });
+
+
+        socket.on('playerStatus', function (data) {
+
+
+            console.log(data);
+
+
+            console.log(data);
+            // Add the message to the ul list
+            var players = data.Players;
+            document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
+
+
+           document.getElementById('mainboard').innerHTML = "<div>";
+
+            for (i = 0; i < players.length; i++) {
+                var player = players[i];
+                var status = (player.alive) ? "Lever!" : "D&ouml;d";
+
+                //var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+
+                var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
+
+                document.getElementById('mainboard').innerHTML += output;
+            }
+
+            document.getElementById('mainboard').innerHTML += '</div><div style="clear:left;">';
+
+            document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A></div>";
+
+        });
+
+
+
+        socket.on('updateMission', function (data) {
+
+            document.getElementById('messagediv').innerHTML = data;
+
+        });
+
+    });
+
+
+ 
+
+    function send_message() {
+        var message = document.getElementById('message');
+        var nick = document.getElementById('nick');
+
+        // Simple validation
+        if (nick.value == '') {
+            alert('You must enter your nick!');
+            console.log('hej');
+            return false;
+        }
+
+        // Send the message to the server
+        socket.emit('message', { nick: nick.value, message: message.value });
+
+        // Clear the input
+        message.value = '';
+
+        return false;
+    }
+
+
+    function startGame(){
+        socket.emit('startGame');
+    }
+</script>
+
+
+ <html>
+<style>
+
+body 
+{
+    background-color: #000000;
+   
+    font-size: 24px;
+    color: #ffffff;
+    font-family: Verdana;
+    
+}
+}
+
+div#mainboard
+{
+    font-size: 24px;
+    color: #ffffff;
+    font-family: Verdana;
+    
+}
+
+</style>
+
+<body>
+<div id="mainboard">...no players connected...</div>
+
+<div id="messagediv"  style="width:100%; font-size: 24px; ">...game not started...</div> 
+</body>
+</html>
