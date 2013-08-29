@@ -5,7 +5,8 @@ var Game =
   DeadColor: {colorName: "Dead" , hex: "#333333"},
   Players: [],
   TargetColor: {},
-  NewRound: function(client)
+  IntervalId: 0,
+  UpdateTarget: function()
   {
     var aliveColors = new Array();
     for(var i = 0; i < Game.Players.length; i++)
@@ -13,23 +14,50 @@ var Game =
         console.log(Game.Players[i].alive)
         if(Game.Players[i].alive)
         {
-           var index = Math.floor(Math.random() * Game.Colors.length);
-           console.log("GAME.COLORS["+index+"]: "+Game.Colors[index].hex)
-           aliveColors.push(Game.Colors[index]);
-           Game.Players[i].color = Game.Colors[index].hex
-           
-           
-           var targetColorIndex = Math.floor(Math.random() * aliveColors.length);
-           console.log("ALIVE COLORS: INDEX "+targetColorIndex + " AND LENGTH "+aliveColors.length);
-           Game.TargetColor = aliveColors[targetColorIndex];
-           //console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
-           //console.log("TARGET COLOR HEX: "+aliveColors[targetColorIndex].hex);
-           //console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
+           var hex = Game.Players[i].color;
+           aliveColors.push(Game.GetColorByHex(hex));
         }
     }
-    io.sockets.emit('updateMission', "Hunt color: "+Game.TargetColor.colorName);
-    Game.EmitPlayerStatus();
-    
+    if(aliveColors.length > 0)
+    {
+       var targetColorIndex = Math.floor(Math.random() * aliveColors.length);
+       console.log("ALIVE COLORS: INDEX "+targetColorIndex + " AND LENGTH "+aliveColors.length);
+       Game.TargetColor = aliveColors[targetColorIndex];
+       
+       console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
+       console.log("TARGET COLOR HEX: "+aliveColors[targetColorIndex].hex);
+       console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
+       
+       io.sockets.emit('updateMission', "Hunt color: "+Game.TargetColor.colorName);
+       Game.EmitPlayerStatus();
+       setInterval(function() { Game.UpdateTarget(); }, 10000);
+       console.log("set interval: 10 000");
+    }
+    //Endscreen
+  },
+  NewRound: function(client)
+  {
+    for(var i = 0; i < Game.Players.length; i++)
+    {
+        console.log(Game.Players[i].alive)
+        if(Game.Players[i].alive)
+        {
+           var index = Math.floor(Math.random() * Game.Colors.length);
+           console.log("GAME.COLORS["+index+"]: "+Game.Colors[index].hex)
+           Game.Players[i].color = Game.Colors[index].hex;
+        }
+    }
+    Game.UpdateTarget();
+  },
+  GetColorByHex: function(hex)
+  {
+    for(var i = 0; i < Game.Colors.length; i++)
+    {
+      if(Game.Colors[i].hex == hex)
+      {
+        return Game.Colors[i];
+      }
+    }
   },
   CheckTargetColor: function(id)
   {
@@ -45,6 +73,8 @@ var Game =
               Game.Players[i].color = Game.DeadColor.hex;
               console.log("Alive? "+Game.Players[i].alive);
               //Game.EmitPlayerStatus();
+              clearInterval();
+              console.log("clear interval");
               Game.NewRound();
            }
         }
