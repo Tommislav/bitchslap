@@ -15,6 +15,11 @@ app.get('/mainboard', function (req, res) {
 });
 
 
+app.get('/play', function (req, res) {
+    res.sendfile(__dirname + '/play.html');
+});
+
+
 // Called when client connects
 //var players = new Array();
 io.sockets.on('connection', function (client) {
@@ -25,7 +30,15 @@ io.sockets.on('connection', function (client) {
     console.log(data);
     // Sends a message to all connected clients
     io.sockets.emit('message', data);
+    });
+
+client.on('connectPlayer', function (data) {
+    // Log data to the console
+    //players.push(data.playername);
+    console.log(data);
+    // Sends a message to all connected clients
+    io.sockets.emit('message', data);
+});
 
 
-  });
 });
