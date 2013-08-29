@@ -1,0 +1,105 @@
+<html>
+	<head>
+		
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+	    <script src="/socket.io/socket.io.js"></script>
+	    <script src="settings.js"></script>
+    	
+		<style>
+		
+		body, html {
+			height: 100%;
+		}
+		
+		div#main {
+			background-color: magenta;
+			font-size: 100px;
+			color: white;
+			font-weight: bold;
+			font-family: Helvetica, Arial, sans-serif;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+		}
+		</style>
+		
+		<script>
+
+		    var id;
+        var socket = io.connect(Settings.ServerUrl);
+		    $(document).on("vclick", "div#main", function () {
+		        // changeColor(getRandomColor());
+
+		        if (id == undefined)
+                        connectMe();
+
+		    });
+		  
+            function changeColor(color){
+	            $("div#main").css("color", "#000");
+	            $("div#main").css("background-color", color);
+            }
+		  
+            function getRandomColor()
+            {
+	            return '#' + (0x1000000 + Math.random() * 0xFFFFFF).toString(16).substr(1, 6);
+            }
+
+            
+
+            // Called when client is connected to server
+            socket.on('connect', function () {
+                // Called when client receives message from server
+                socket.on('message', function (data) {
+
+                    // Log to browser console
+                    console.log(data);
+                    // Add the message to the ul list
+                    var li = document.createElement('li');
+                    li.innerHTML = data.nick + " says: " + data.message;
+                    document.getElementById('chat').appendChild(li);
+
+                });
+
+                socket.on('playerStatus', function (data) {
+                    // Log to browser console
+                    console.log(data);
+                    // Add the message to the ul list
+                    var players = data.Players;
+                    document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
+
+                    for (i = 0; i < players.length; i++) {
+
+
+                        var player = players[i];
+
+                        if (player.id == id) {
+                            var status = (player.alive) ? "Lever!" : "D&ouml;d";
+                            var output = "<table border=0 width=100 height=100 border=10 bgcolor=" + player.color + "><tr><td> " + player.name + "<br>" + status + "</td></tr></table>";
+                            document.getElementById('main').innerHTML += output;
+                        }
+                    }
+                });
+            });
+
+            function connectMe() {
+                id = Math.random() * 1000000 + 1;
+                socket.emit('connectPlayer', {"id": id });
+            }
+
+
+		</script>
+	</head>
+	
+	<body>
+		<div id="main">
+            
+
+
+		</div>
+	</body>
+</html>

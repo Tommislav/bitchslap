@@ -1,7 +1,6 @@
 <script src="/socket.io/socket.io.js"></script>
-<script src="/settings.js"></script>
 <script>
-    var socket = io.connect(Settings.ServerUrl);
+    var socket = io.connect('http://localhost:10141');
 
     // Called when client is connected to server
     socket.on('connect', function () {
@@ -36,11 +35,9 @@
 
 
     function send_playerStatus() {
-        /*socket.emit('playerStatus', 
-        { 
-              Players:
-                                     [{id: "123", name: "jonas", color: "#ff0000", alive: true },                                                {id: "123", name: "jon", color: "#00ff00", alive: false }
-         );*/
+        socket.emit('playerStatus', { Players:
+                                     [{id: "123", name: "jonas", color: "#ff0000", alive: true },                                                {id: "123", name: "jon", color: "#00ff00", alive: false}
+         );
     }
 
     function send_message() {

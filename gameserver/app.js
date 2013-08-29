@@ -18,19 +18,25 @@ app.get('/settings.js', function (req, res) {
 });
 
 
-var colors = ["#ff0000", "#00ff00", "#00ff00", "#cccccc", "#ffccff"];
+var colors = ["#ff0000", "#00ff00", "#0000ff", "#cccccc", "#ffccff"];
+
+app.get('/play', function (req, res) {
+    res.sendfile(__dirname + '/play.html');
+});
+
 
 // Called when client connects
-var players = new Array();
+var Players = new Array();
 io.sockets.on('connection', function (client) {
   // Called when receving 'message' from the client
-  client.on('connectPlayer', function (id) {
+  client.on('connectPlayer', function (data) {
     // Log data to the console
     //players.push(data.playername);
-    players.push('{ id: '+id+', name: "'+colors[players.length]+'", color: "'+colors[players.length]+'", alive: true  }');
-    console.log(id);
+    Players.push({ id: data.id , name: colors[Players.length]+"", color: colors[Players.length]+"", alive: true  });
+    console.log(data.id);
     
     // Sends a message to all connected clients
-    io.sockets.emit('playerStatus', players);
-  });
+
+    io.sockets.emit('playerStatus', {Players : Players});
+    });
 });
