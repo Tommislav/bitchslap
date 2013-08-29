@@ -12,9 +12,10 @@ class Main extends Sprite {
 	public function new () {
 		
 		super ();
-		
-		var snd:Sound = Assets.getSound("assets/sound.mp3");
-		snd.play();
+		Lib
+		graphics.beginFill(0xff0000, 1);
+		graphics.drawRect(10, 10, 100, 100);
+		graphics.endFill();
 		
 		
 	}

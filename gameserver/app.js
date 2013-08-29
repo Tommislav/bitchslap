@@ -10,6 +10,11 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
+app.get('/mainboard', function (req, res) {
+    res.sendfile(__dirname + '/mainboard.html');
+});
+
+
 // Called when client connects
 //var players = new Array();
 io.sockets.on('connection', function (client) {
@@ -19,6 +24,8 @@ io.sockets.on('connection', function (client) {
     //players.push(data.playername);
     console.log(data);
     // Sends a message to all connected clients
-    io.sockets.emit('connectplayer', players);
+    io.sockets.emit('message', data);
+
+
   });
 });
