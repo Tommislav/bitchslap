@@ -31,13 +31,19 @@
 
 		    var id;
         var socket = io.connect(Settings.ServerUrl);
-		    $(document).on("vclick", "div#main", function () {
-		        // changeColor(getRandomColor());
+        $(document).on("vclick", "div#main", function () {
+            // changeColor(getRandomColor());
 
-		        if (id == undefined)
-                        connectMe();
+            if (id == undefined) {
+                connectMe();
+            }
+            else {
+                //already connected
 
-		    });
+
+                socket.emit('onClick',  id );
+            }
+        });
 		  
             function changeColor(color){
 	            $("div#main").css("color", "#000");
@@ -68,26 +74,30 @@
                 socket.on('playerStatus', function (data) {
                     // Log to browser console
                     console.log(data);
+
                     // Add the message to the ul list
                     var players = data.Players;
-                    document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
+                //    document.getElementById('main').innerHTML = "update from gameserver recieved";
 
                     for (i = 0; i < players.length; i++) {
 
-
                         var player = players[i];
+                       // alert("id:" + player.id + "==" + id);
 
                         if (player.id == id) {
                             var status = (player.alive) ? "Lever!" : "D&ouml;d";
                             var output = "<table border=0 width=100 height=100 border=10 bgcolor=" + player.color + "><tr><td> " + player.name + "<br>" + status + "</td></tr></table>";
-                            document.getElementById('main').innerHTML += output;
+                            //  document.getElementById('main').innerHTML += output;
+
+                            document.getElementById('main').style.backgroundColor = player.color;
                         }
                     }
                 });
             });
 
             function connectMe() {
-                id = Math.random() * 1000000 + 1;
+                id = Math.round(Math.random() * 1000000 + 1);
+             //   alert(id);
                 socket.emit('connectPlayer', {"id": id });
             }
 

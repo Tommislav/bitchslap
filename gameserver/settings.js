@@ -1,4 +1,4 @@
-var settings = 
+var Settings = 
 {
-  ServerUrl : "localhost:8080"
+  ServerUrl : "192.168.8.76:10141"
 };

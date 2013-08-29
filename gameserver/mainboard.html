@@ -19,29 +19,42 @@
 
 
         socket.on('playerStatus', function (data) {
-            // Log to browser console
+
+
+            console.log(data);
+
+
             console.log(data);
             // Add the message to the ul list
             var players = data.Players;
             document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
 
+
+            document.getElementById('mainboard').innerHTML = "<table border=1><tr>";
+
             for (i = 0; i < players.length; i++) {
                 var player = players[i];
                 var status = (player.alive) ? "Lever!" : "D&ouml;d";
-                var output = "<table border=0 width=100 height=100 border=10 bgcolor=" + player.color + "><tr><td> " + player.name + "<br>" + status + "</td></tr></table>";
+              
+                var output = '<div style="width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
                 document.getElementById('mainboard').innerHTML += output;
             }
+
+            document.getElementById('mainboard').innerHTML += "</tr></table>";
+
+            document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A>";
+
         });
     });
 
 
-    function send_playerStatus() {
+   /* function send_playerStatus() {
         /*socket.emit('playerStatus', 
         { 
               Players:
                                      [{id: "123", name: "jonas", color: "#ff0000", alive: true },                                                {id: "123", name: "jon", color: "#00ff00", alive: false }
-         );*/
-    }
+         );
+    }*/
 
     function send_message() {
         var message = document.getElementById('message');
@@ -63,12 +76,13 @@
         return false;
     }
 
+
+    function startGame(){
+        socket.emit('startGame');
+    }
 </script>
 
-<form  action="">
 
-  
-  <a href=javascript:send_playerStatus()>test</a>
-</form>
+ 
 
 <div id="mainboard">...not ready...</div>
