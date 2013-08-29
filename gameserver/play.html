@@ -17,7 +17,7 @@
 		
 		div#main {
 			background-color: magenta;
-			font-size: 80px;
+			font-size: 60px;
 			color: white;
 			font-weight: bold;
 			font-family: Helvetica, Arial, sans-serif;
@@ -27,6 +27,10 @@
 			bottom: 0;
 			right: 0;
 			left: 0;
+			margin-bottom: 10px;
+			margin-left: 10px;
+			margin-right: 10px;
+			
 		}
 		</style>
 		
@@ -39,7 +43,7 @@
 
 
             var id;
-
+            var myname;
 
 
 
@@ -49,7 +53,7 @@
             // changeColor(getRandomColor());
 
             if (id == undefined) {
-                connectMe();
+             //   connectMe();
             }
             else {
                 //already connected
@@ -85,6 +89,19 @@
 
                 });
 
+
+                socket.on('readyForNewGame', function () {
+
+                    // Log to browser console
+                    console.log(data);
+                    
+
+
+
+
+                });
+
+
                 socket.on('playerStatus', function (data) {
                     // Log to browser console
                     console.log(data);
@@ -118,7 +135,15 @@
             }
 
 
+            function joinMe() {
 
+                myname=  document.getElementById('namn').value;
+
+                if (myname !="Your name" && myname != undefined && myname != "")
+                    socket.emit('connectPlayer', { "id": id, "name": myname });
+                else
+                    document.getElementById('namn').style.borderColor = "red";
+           }
 
 
 		</script>
@@ -128,7 +153,13 @@
 		<div id="main">
             
             Bitchslap!<br />
-            Klicka f&ouml;r att starta!
+         
+            <div id="register">
+                <form>
+                    <input id="namn" type="text" name="namn" value="Your name"/>
+                    <input type=button value="Join" onclick="joinMe();return false;" />
+                </form>
+            </div>
 
 		</div>
 	</body>
