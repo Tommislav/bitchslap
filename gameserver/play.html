@@ -77,12 +77,12 @@
 
                     // Add the message to the ul list
                     var players = data.Players;
-                //    document.getElementById('main').innerHTML = "update from gameserver recieved";
+                    //    document.getElementById('main').innerHTML = "update from gameserver recieved";
 
                     for (i = 0; i < players.length; i++) {
 
                         var player = players[i];
-                       // alert("id:" + player.id + "==" + id);
+                        // alert("id:" + player.id + "==" + id);
 
                         if (player.id == id) {
                             var status = (player.alive) ? "Lever!" : "D&ouml;d";
@@ -90,6 +90,8 @@
                             //  document.getElementById('main').innerHTML += output;
 
                             document.getElementById('main').style.backgroundColor = player.color;
+                            document.getElementById('main').innerHTML = "";
+
                         }
                     }
                 });
@@ -108,7 +110,7 @@
 	<body>
 		<div id="main">
             
-
+            Klicka för att starta!
 
 		</div>
 	</body>
