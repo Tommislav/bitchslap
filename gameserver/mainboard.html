@@ -1,0 +1,83 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:10141');
+
+    // Called when client is connected to server
+    socket.on('connect', function () {
+        // Called when client receives message from server
+        socket.on('message', function (data) {
+
+            // Log to browser console
+            console.log(data);
+            // Add the message to the ul list
+            var li = document.createElement('li');
+            li.innerHTML = data.nick + " says: " + data.message;
+            document.getElementById('chat').appendChild(li);
+
+        });
+
+
+        socket.on('playerStatus', function (data) {
+
+            // Log to browser console
+            console.log(data);
+            // Add the message to the ul list
+
+            var players = data.Players;
+            document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
+
+            for (i = 0; i < players.length; i++) {
+
+                var player = players[i];
+
+                var status = (player.alive) ? "Lever!" : "D&ouml;d";
+                var output = "<table border=0 width=100 height=100 border=10 bgcolor=" + player.color + "><tr><td> " + player.name + "<br>" + status + "</td></tr></table>";
+
+                document.getElementById('mainboard').innerHTML += output;
+            }
+        });
+
+
+
+    });
+
+
+    function send_playerStatus() {
+
+        socket.emit('playerStatus', { Players:
+                                     [{id: "123", name: "jonas", color: "#ff0000", alive: true },                                                {id: "123", name: "jon", color: "#00ff00", alive: false}
+                                               ]}
+         );
+        
+    }
+
+    function send_message() {
+
+        var message = document.getElementById('message');
+        var nick = document.getElementById('nick');
+
+        // Simple validation
+        if (nick.value == '') {
+            alert('You must enter your nick!');
+            console.log('hej');
+            return false;
+        }
+
+        // Send the message to the server
+        socket.emit('message', { nick: nick.value, message: message.value });
+
+        // Clear the input
+        message.value = '';
+
+        return false;
+    }
+
+</script>
+
+<form  action="">
+
+  
+  <a href=javascript:send_playerStatus()>test</a>
+</form>
+
+<div id="mainboard">...not ready...</div>
