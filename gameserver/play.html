@@ -27,9 +27,7 @@
 			bottom: 0;
 			right: 0;
 			left: 0;
-			margin-bottom: 10px;
-			margin-left: 10px;
-			margin-right: 10px;
+			padding: 10px;
 			width: 100%;
 			height: 768px;
 			
@@ -85,36 +83,53 @@
                 socket.on('readyForNewGame', function () {
                     // Log to browser console
 
+                    document.getElementById('main').style.backgroundColor = "#ababab";
+
+
+                    var outputText = 'Bitchslap!<br /><div id="register"><input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/><br><a href="javascript:joinMe()">Join</a></div>';
+
+                    document.getElementById('main').innerHTML = outputText;
+
+                    if (myname != null)
+                        document.getElementById('namn').value = myname;
+
+
+
                 });
 
 
                 socket.on('playerStatus', function (data) {
+
+
                     // Log to browser console
                     console.log(data);
 
                     // Add the message to the ul list
                     var players = data.Players;
-                    //    document.getElementById('main').innerHTML = "update from gameserver recieved";
-
+                
                     for (i = 0; i < players.length; i++) {
 
                         var player = players[i];
 
-
                         if (player.id == id) {
 
-                            var status = (player.alive) ? "Lever!" : "D&ouml;d";
-                            var output = "<table border=0 width=100 height=100 border=10 bgcolor=" + player.color + "><tr><td> " + player.name + "<br>" + status + "</td></tr></table>";
+                            var status = (player.alive) ? " Lever!" : " D&ouml;d!";
+
+                            if (player.color == "#ABABAB")
+                                status = "Väntar...";
+
+                            var outputstring = player.name + "<br>" + status;
                             //  document.getElementById('main').innerHTML += output;
 
-                            
                             document.getElementById('main').style.backgroundColor = player.color;
-                            document.getElementById('main').innerHTML = "&nbsp;";
+                            document.getElementById('main').innerHTML = outputstring;
 
                         }
                     }
                 });
             });
+
+
 
             function connectMe() {
                 id = Math.round(Math.random() * 1000000 + 1);
@@ -125,7 +140,6 @@
 
             function joinMe() {
                 id = Math.round(Math.random() * 1000000 + 1);
-
                 myname =  document.getElementById('namn').value;
 
                 if (myname !="Your name" && myname != undefined && myname != "")
@@ -135,7 +149,7 @@
             }
 
             function clearIt() {
-                document.getElementById('namn').value = ""; ;
+                document.getElementById('namn').value = "";
             }
                 
 
@@ -148,7 +162,7 @@
             Bitchslap!<br />
             
             <div id="register">
-                    <input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/>
+                    <input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/><br />
                     <a href="javascript:joinMe()">Join</a>
             </div>
 

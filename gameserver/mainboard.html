@@ -1,7 +1,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/settings.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
     var socket = io.connect(Settings.ServerUrl);
+	var messageDiv;
 
     // Called when client is connected to server
     socket.on('connect', function () {
@@ -19,7 +21,7 @@
 
 
         socket.on('playerStatus', function (data) {
-
+			$("#no_players").hide();
             //console.log(data);
             // Add the message to the ul list
             var players = data.Players;
@@ -29,16 +31,16 @@
 
             for (i = 0; i < players.length; i++) {
                 var player = players[i];
-                var status = (player.alive) ? "Lever!" : "D&ouml;d";
+                var status = (player.alive) ? "lever!" : "d&ouml;d";
 
-                //var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
                 var output = '<div style="text-align: center; float: left;border: 1px solid #000000; width:150; height:150; background-color:' + player.color + ';">' + player.name + '<br>' + status + '&nbsp;</div>';
 
                 document.getElementById('mainboard').innerHTML += output;
+				
+				if(player.color == "#ABABAB")
+					$("#start_link").show();
             }
-
-            document.getElementById('mainboard').innerHTML += '</div><div style="clear:left;">';
-            document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A></div>";
+			
 
         });
 
@@ -54,22 +56,21 @@
         });
 
         socket.on('gameEnd', function (data) {
-            //visa vinnare
-            //data är ett playerobjekt 
-
-            var message = data.name + "har vunnit";
-
+			$("#winner").text(data.name + " vann!");
+			$("#winner").show();
+			$("#messagediv").hide();
+			$("#mainboard").hide();
+		   	$("#start_link").hide();
+			
             //play majestic sound
         });
 
         socket.on('readyForNewGame', function () {
-
-            //nolla diven med spelare
-            // visa länken?
-
-            document.getElementById('mainboard').innerHTML = "meh, joina igen då";
-
-
+			$("body").css("background-color", "#000");
+           $("#winner").hide();
+		   $("#mainboard").hide();		   
+		   $("#no_players").show();
+		   $("#start_link").hide();
         });
 
 
@@ -101,6 +102,7 @@
 
 
     function startGame(){
+		$("#start_link").hide();
         socket.emit('startGame');
     }
 </script>
@@ -112,12 +114,10 @@
 body 
 {
     background-color: #000000;
-   
     font-size: 24px;
     color: #ffffff;
     font-family: Verdana;
     
-}
 }
 
 div#mainboard
@@ -125,14 +125,41 @@ div#mainboard
     font-size: 24px;
     color: #ffffff;
     font-family: Verdana;
-     
+ 	display: table;
+	clear: both;
 }
 
+div#winner {
+	font-size: 50px;
+	border: solid 10px #FFEB49;
+	background-color: #F1AF0D;
+	padding: 10px;
+	display: none;
+}
+
+div#messagediv {
+}
+
+div#start_link {
+	display: none;
+	margin-top: 20px;
+}
+
+div#start_link a {
+	color: #fff;
+	border: solid 1px white;
+	background-color: red;
+	padding: 10px;
+	text-decoration: none;
+}
 </style>
 
 <body>
-<div id="mainboard">...no players connected...</div>
 
-<div id="messagediv"  style="width:100%; font-size: 24px; ">...game not started...</div> 
+	<div id="winner">Stina vann!</div>
+	<div id="no_players">No players connected.</div>
+	<div id="mainboard"></div>
+	<div id="start_link"><a href="#" onclick="startGame();">Starta!</a></div>
+	<div id="messagediv"></div> 
 </body>
 </html>
