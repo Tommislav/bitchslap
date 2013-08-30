@@ -38,8 +38,8 @@
             //console.log(data);
             // Add the message to the ul list
             var players = data.Players;
-            document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
 
+			$("#mainboard").show();
             document.getElementById('mainboard').innerHTML = "<div>";
 
             for (i = 0; i < players.length; i++) {
