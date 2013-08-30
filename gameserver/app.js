@@ -228,7 +228,7 @@ server.listen(10141);
 
 // Serve the index.html file
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile(__dirname + '/play.html');
 });
 app.get('/mainboard', function (req, res) {
     res.sendfile(__dirname + '/mainboard.html');
