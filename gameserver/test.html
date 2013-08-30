@@ -1,6 +1,8 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/settings.js"></script>
 <script>
+Element.prototype.prependChild = function(child) { this.insertBefore(child, this.firstChild); };
+
   var socket = io.connect(Settings.ServerUrl);
 
   // Called when client is connected to server
@@ -13,7 +15,11 @@
 		var str = "-> playerStatus<br/>";
 		var arr = data.Players;
 		for (var i=0; i < arr.length; i++) {
-			str += "Player data ["+i+"], id: "+arr[i].id+", name: '"+arr[i].name+"', color: "+arr[i].color+", alive: "+arr[i].alive+" <br/>";
+			var color = arr[i].color;
+			var aliveStr = (arr[i].alive) ? "(A) ":"(D) ";
+			str += "<font color=" + color + ">";
+			str += aliveStr + "id (" + arr[i].id + "), name: " + arr[i].name;
+			str += "</font><br/>";
 		}
 		log(str);
 	});
@@ -21,7 +27,10 @@
 	socket.on('updateMission', function(data){
 		var text = data.text;
 		var color = data.color;
-		log("-> updateMission text: '"+text+"', color: '"+color+"'");
+		var str = "<b><font color=" + color + ">";
+		str += "-> updateMission text: '"+text+"', color: '"+color+"'";
+		str += "</font></b><br/>";
+		log(str);
 	});
 	
 	socket.on('gameEnd', function(data){
@@ -44,7 +53,7 @@
   function log(str) {
 	 var li = document.createElement('li');
       li.innerHTML = str;
-      document.getElementById('chat').appendChild(li);
+      document.getElementById('chat').prependChild(li);
   }
 
 

@@ -1,8 +1,9 @@
 var Game = 
 {
-  Colors: [{colorName: "Purple", hex: "#FF37C9"}, {colorName: "Yellow", hex: "#FFFF00"}, {colorName: "Green", hex: "#12FF4F"}, {colorName: "Blue", hex: "#37E5FF"}],
+  Colors: [{colorName: "Purple", hex: "#e925cb"}, {colorName: "Orange", hex: "#e9ad0a"}, {colorName: "Green", hex: "#4dba30"}, {colorName: "Blue", hex: "#414dc9"}],
   InitiateColor: {colorName: "Lightgrey" , hex: "#ABABAB"},
   DeadColor: {colorName: "Dead" , hex: "#333333"},
+  DeathMatchColor: {colorName: "Red", hex: "#e23351"},
   Players: [],
   TargetColor: {},
   IntervalId: 0,
@@ -28,11 +29,12 @@ var Game =
   {
       Game.Tick++;
       
-      
       var nextTime = 10000 - (500 * Game.Tick);
       if (nextTime < 4000) {
         nextTime = 4000;
       }
+      
+      //if(Game.DeathMatchMode
       
       console.log("==== update ("+Game.Tick+") =====, timeToNext: " + nextTime);
       
@@ -45,7 +47,6 @@ var Game =
       Game.UpdateTarget();
       
   },
-  
   ChangePlayerColors: function()
   {
     for(var i = 0; i < Game.Players.length; i++)
@@ -55,12 +56,33 @@ var Game =
         {
            var index = Math.floor(Math.random() * Game.Colors.length);
            var newColor = Game.Colors[index].hex;
+           
+           if(Game.IsDeathMatchMode())//DeathMatchMode
+           {
+              newColor = Game.DeathMatchColor.hex;
+           }
+           
            console.log("Player["+i+"].color = " + newColor);
            Game.Players[i].color = newColor;
         }
     }
   },
-  
+  IsDeathMatchMode: function()
+  {
+    return Game.NumberOfPlayersAlive() == 2;
+  },
+  NumberOfPlayersAlive: function()
+  {
+    var numberOfAlivePlayers = 0;
+    for(var i = 0; i < Game.Players.length; i++)
+    {
+        if(Game.Players[i].alive)
+        {
+           numberOfAlivePlayers++;
+        }        
+    }
+    return numberOfAlivePlayers;
+  },
   UpdateTarget: function()
   {
     var aliveColors = new Array();
@@ -74,11 +96,10 @@ var Game =
            aliveColors.push(Game.GetColorByHex(hex));
            winner = Game.Players[i];
         }
-        
     }
+
     if(aliveColors.length <= 1)
     {
-      //WINNER IS'
       clearInterval(Game.IntervalId);
       Game.IntervalId = setInterval(function() { Game.ReadyForNewGame(); }, 10000);
       console.log("==== Winner is: " + winner.name);
@@ -91,17 +112,23 @@ var Game =
        //console.log("ALIVE COLORS: INDEX "+targetColorIndex + " AND LENGTH "+aliveColors.length);
        Game.TargetColor = aliveColors[targetColorIndex];
        
+       if(Game.IsDeathMatchMode())//DeathMatchMode
+       {
+          console.log(" === UpdateTarget() -> If(DeathMatchMode) -> Change TargetColor to Red.")
+          Game.TargetColor = Game.DeathMatchColor;
+          Game.ChangePlayerColors();
+       }
+       
        //console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
        //console.log("TARGET COLOR HEX: "+aliveColors[targetColorIndex].hex);
        //console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
        
        console.log("====New target color: " + Game.TargetColor.colorName);
-       io.sockets.emit('updateMission', {text: "Hunt for color: "+Game.TargetColor.colorName , color: Game.TargetColor.hex});
+       io.sockets.emit('updateMission', { text: "Hunt for color: "+Game.TargetColor.colorName , color: Game.TargetColor.hex });
        Game.EmitPlayerStatus();
     }
     //Endscreen
   },
-  
   GetColorByHex: function(hex)
   {
     for(var i = 0; i < Game.Colors.length; i++)
@@ -133,13 +160,11 @@ var Game =
            }
         }
     }
-    
   },
   EmitPlayerStatus: function()
   {
     io.sockets.emit('playerStatus', {Players : Game.Players});
   }
-  
 };
 
 var app = require('express')()
@@ -153,38 +178,47 @@ server.listen(10141);
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
-
 app.get('/mainboard', function (req, res) {
     res.sendfile(__dirname + '/mainboard.html');
 });
 app.get('/settings.js', function (req, res) {
     res.sendfile(__dirname + '/settings.js');
 });
-
 app.get('/play', function (req, res) {
     res.sendfile(__dirname + '/play.html');
+});
+app.get('/test', function (req, res) {
+    res.sendfile(__dirname + '/test.html');
+});
+//Serve Sounds (snd)
+app.get('/snd/snd4.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd4.wav');
+});
+app.get('/snd/snd3.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd3.wav');
+});
+app.get('/snd/snd2.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd2.wav');
+});
+app.get('/snd/snd1.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd1.wav');
 });
 
 
 // Called when client connects
-//var Players = new Array();
 io.sockets.on('connection', function (client) {
   // Called when receving 'message' from the client
   client.on('connectPlayer', function (data) {
     // Log data to the console
-    //players.push(data.playername);
-    //console.log(Game.InitiateColor);
     Game.Players.push({ id: data.id , name: data.name, color: Game.InitiateColor.hex, alive: true  });
     console.log("Join new player " + data.name + ", with id: " + data.id);
     
     // Sends a message to all connected clients
     Game.EmitPlayerStatus();
     });
-    
     client.on('startGame', function (data) {
       Game.NewRound(client);
     });
-    
     client.on('onClick', function (id) {
       console.log("onClick id: "+id);
       Game.CheckTargetColor(id);
