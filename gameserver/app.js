@@ -160,7 +160,13 @@ var Game =
        //console.log("GAME TARGET COLOR HEX: "+Game.TargetColor.hex+"");
        
        console.log("====New target color: " + Game.TargetColor.colorName);
-       io.sockets.emit('updateMission', { text: "Hunt for color: "+Game.TargetColor.colorName , color: Game.TargetColor.hex });
+	   
+	   var missionText = "Hunt for color: "+Game.TargetColor.colorName;
+	   if (Game.IsDeathMatchMode()) {
+		   missionText = "DEATHMATCH!!!";
+	   }
+	   
+       io.sockets.emit('updateMission', { text: missionText , color: Game.TargetColor.hex });
        Game.EmitPlayerStatus();
     }
     //Endscreen
