@@ -1,6 +1,6 @@
 var Game = 
 {
-  Colors: [{colorName: "Purple", hex: "#FF37C9"}, {colorName: "Yellow", hex: "#FFFF00"}, {colorName: "Green", hex: "#12FF4F"}, {colorName: "Blue", hex: "#37E5FF"}],
+  Colors: [{colorName: "Purple", hex: "#e925cb"}, {colorName: "Orange", hex: "#e9ad0a"}, {colorName: "Green", hex: "#4dba30"}, {colorName: "Blue", hex: "#414dc9"}],
   InitiateColor: {colorName: "Lightgrey" , hex: "#ABABAB"},
   DeadColor: {colorName: "Dead" , hex: "#333333"},
   DeathMatchColor: {colorName: "Red", hex: "#e23351"},
