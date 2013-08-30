@@ -23,7 +23,13 @@ var Game =
   },
   NewRound: function(client) // all players has connected
   {
+	if (Game.Players.length == 0) {
+		// No players
+		Game.ReadyForNewGame();
+		return;
+	}
     Game.Tick = 0;
+	Game.DeathMatchTick = 0;
     Game.ChangePlayerColors();
     Game.Update();
   },
