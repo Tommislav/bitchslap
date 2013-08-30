@@ -1,7 +1,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/settings.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
     var socket = io.connect(Settings.ServerUrl);
+	var messageDiv;
 
     // Called when client is connected to server
     socket.on('connect', function () {
@@ -54,22 +56,19 @@
         });
 
         socket.on('gameEnd', function (data) {
-            //visa vinnare
-            //data är ett playerobjekt 
-
-            var message = data.name + "har vunnit";
-
+			$("#winner").text(data.name + " vann!");
+			$("#winner").show();
+			$("#messagediv").hide();
+			$("#mainboard").hide();
+			
             //play majestic sound
         });
 
         socket.on('readyForNewGame', function () {
 
-            //nolla diven med spelare
+           $("#winner").hide();
+		   $("#mainboard").show(); 
             // visa länken?
-
-            document.getElementById('mainboard').innerHTML = "meh, joina igen då";
-
-
         });
 
 
@@ -118,7 +117,6 @@ body
     font-family: Verdana;
     
 }
-}
 
 div#mainboard
 {
@@ -128,11 +126,21 @@ div#mainboard
      
 }
 
+div#winner {
+	font-size: 50px;
+	border: solid 10px #FFEB49;
+	background-color: #F1AF0D;
+	padding: 10px;
+	display: none;
+}
+
 </style>
 
 <body>
-<div id="mainboard">...no players connected...</div>
 
-<div id="messagediv"  style="width:100%; font-size: 24px; ">...game not started...</div> 
+	<div id="winner">Stina vann!</div>
+	<div id="mainboard">No players connected.</div>
+
+	<div id="messagediv"  style="width:100%; font-size: 24px; "></div> 
 </body>
 </html>
