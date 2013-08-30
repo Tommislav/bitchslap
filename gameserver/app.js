@@ -2,8 +2,10 @@ var Game =
 {
   Colors: [{colorName: "Purple", hex: "#e925cb"}, {colorName: "Orange", hex: "#e9ad0a"}, {colorName: "Green", hex: "#4dba30"}, {colorName: "Blue", hex: "#414dc9"}],
   InitiateColor: {colorName: "Lightgrey" , hex: "#ABABAB"},
+  ZombieColor: {colorName: "Zombie" , hex: "#00DD16"},
   DeadColor: {colorName: "Dead" , hex: "#333333"},
   DeathMatchColor: {colorName: "Red", hex: "#e23351"},
+  DeathMatchTick: 0,
   Players: [],
   TargetColor: {},
   IntervalId: 0,
@@ -14,7 +16,7 @@ var Game =
     console.log("---------> Ready for new round!!!");
     //Clear data
     clearInterval(Game.IntervalId);
-    Game.Players = new Array();
+    Game.Players = [];
     Game.TargetColor = {};
     io.sockets.emit('readyForNewGame', "");   
     
@@ -34,7 +36,14 @@ var Game =
         nextTime = 4000;
       }
       
-      //if(Game.DeathMatchMode
+      if(Game.IsDeathMatchMode())
+      {
+          //Add Zombie color to Players
+          if(Game.Tick - Game.DeathMatchTick > 1)
+          {
+              Game.ChanageToZombieColor();
+          }
+      }
       
       console.log("==== update ("+Game.Tick+") =====, timeToNext: " + nextTime);
       
@@ -47,7 +56,7 @@ var Game =
       Game.UpdateTarget();
       
   },
-  ChangePlayerColors: function()
+  ChangePlayerColors: function(color)
   {
     for(var i = 0; i < Game.Players.length; i++)
     {
@@ -57,7 +66,7 @@ var Game =
            var index = Math.floor(Math.random() * Game.Colors.length);
            var newColor = Game.Colors[index].hex;
            
-           if(Game.IsDeathMatchMode())//DeathMatchMode
+           if(Game.IsDeathMatchMode())//IsDeathMatchMode
            {
               newColor = Game.DeathMatchColor.hex;
            }
@@ -66,6 +75,25 @@ var Game =
            Game.Players[i].color = newColor;
         }
     }
+  },
+  ChanageToZombieColor: function()
+  {
+      for(var i = 0; i < Game.Players.length; i++)
+      {
+          console.log("ChanageToZombieColor() -> Game.Players["+i+"].alive: "+!Game.Players[i].alive)
+          if(!Game.Players[i].alive)
+          {
+             if(Game.IsDeathMatchMode()) //DeathMatchMode
+             {
+                if(Game.Players[i].color != Game.ZombieColor.hex)
+                {
+                  newColor = Game.ZombieColor.hex;                
+                  console.log("ChanageToZombieColor() -> IF: Game.IsDeathMatchMode() -> IF: PlayerDontHaveZombieColor -> Player["+i+"].color = " + newColor)
+                  Game.Players[i].color = newColor;
+                }                
+             }
+          }
+      }
   },
   IsDeathMatchMode: function()
   {
@@ -114,9 +142,10 @@ var Game =
        
        if(Game.IsDeathMatchMode())//DeathMatchMode
        {
-          console.log(" === UpdateTarget() -> If(DeathMatchMode) -> Change TargetColor to Red.")
+          console.log(" === UpdateTarget() -> If(IsDeathMatchMode) -> Change TargetColor to Red.")
           Game.TargetColor = Game.DeathMatchColor;
           Game.ChangePlayerColors();
+          
        }
        
        //console.log("TARGET COLOR: "+aliveColors[targetColorIndex]);
@@ -156,6 +185,10 @@ var Game =
               //Game.EmitPlayerStatus();
               //console.log("clear interval");
               //Game.NewRound();
+              if(Game.IsDeathMatchMode())
+              {
+                Game.DeathMatchTick = Game.Tick;
+              }
               Game.Update();
            }
         }
