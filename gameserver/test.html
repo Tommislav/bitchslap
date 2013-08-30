@@ -1,0 +1,88 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="/settings.js"></script>
+<script>
+  var socket = io.connect(Settings.ServerUrl);
+
+  // Called when client is connected to server
+  socket.on('connect', function () {
+    // Called when client receives message from server
+	log("Connected to server...");
+  });
+  
+  socket.on('playerStatus', function (data) {
+		var str = "-> playerStatus<br/>";
+		var arr = data.Players;
+		for (var i=0; i < arr.length; i++) {
+			str += "Player data ["+i+"], id: "+arr[i].id+", name: '"+arr[i].name+"', color: "+arr[i].color+", alive: "+arr[i].alive+" <br/>";
+		}
+		log(str);
+	});
+	
+	socket.on('updateMission', function(data){
+		var text = data.text;
+		var color = data.color;
+		log("-> updateMission text: '"+text+"', color: '"+color+"'");
+	});
+	
+	socket.on('gameEnd', function(data){
+		log("-> gameEnd winner: '"+data.name+"'");
+	});
+	
+	socket.on('readyForNewGame', function(data){
+		log("-> readyForNewGame");
+	});
+  
+  
+  
+  function test() {
+	log("Data 1 is " + data1() + ", and data2 is " + data2());
+  }
+  
+  function data1() {return document.getElementById('data1').value;}
+  function data2() {return document.getElementById('data2').value;}
+  
+  function log(str) {
+	 var li = document.createElement('li');
+      li.innerHTML = str;
+      document.getElementById('chat').appendChild(li);
+  }
+
+
+	function connectBatchPlayers() {
+		var a = [{id:0, name:"tommy"}, {id:1, name:"jon"}, {id:2, name:"jonas"}, {id:3, name:"stina"}];
+		for (var i=0; i < a.length; i++) {
+			socket.emit('connectPlayer', a[i]);
+		}
+	}
+
+	function connectPlayer() {
+		socket.emit('connectPlayer', {id:data1(), name:data2()});
+	}
+	
+	function sendClick() {
+		log("send click to server with id: " + data1());
+		socket.emit('onClick', data1());
+	}
+	
+	function startGame() {
+		socket.emit('startGame', "");
+	}
+
+
+
+
+</script>
+
+<a href="#" onclick="test()" />Test</a><br/>
+<a href="#" onclick="connectBatchPlayers()" />Connect batch of players (4)</a><br/>
+<a href="#" onclick="connectPlayer()" />Connect single player (req: id and name)</a><br/>
+<a href="#" onclick="startGame()" />Start game, when all players are connected</a><br/>
+<a href="#" onclick="sendClick()" />onClick (req: id)</a><br/>
+
+
+<form action="">
+  <input type="text" id="data1" placeholder="data1" />
+  <input type="text" id="data2" placeholder="data2" />
+</form>
+
+<ul id="chat"></ul>
