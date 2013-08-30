@@ -1,4 +1,4 @@
 var Settings = 
 {
-  ServerUrl : "192.168.8.167:10141"
+  ServerUrl : "192.168.8.124:10141"
 };
