@@ -6,6 +6,8 @@
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+
 	    <script src="/socket.io/socket.io.js"></script>
 	    <script src="settings.js"></script>
     	
@@ -33,6 +35,16 @@
 			
 			
 		}
+		
+		a 
+		{
+		    background-color: Lime;
+		    color: White !important;
+		    
+		    text-decoration: none;
+		    padding: 10px 10px 10px 10px;
+		}
+		
 		</style>
 		
 		<script>
@@ -85,44 +97,38 @@
 
                     document.getElementById('main').style.backgroundColor = "#ababab";
 
-
-                    var outputText = 'Bitchslap!<br /><div id="register"><input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/><br><a href="javascript:joinMe()">Join</a></div>';
-
-                    document.getElementById('main').innerHTML = outputText;
+                    //var outputText = 'Bitchslap!<br /><div id="register"><input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/><br><a href="javascript:joinMe()">Join</a></div>';
 
                     if (myname != null)
                         document.getElementById('namn').value = myname;
 
-
+                    $("#action").hide();
+                    $("#register").show();
 
                 });
 
 
                 socket.on('playerStatus', function (data) {
-
-
                     // Log to browser console
                     console.log(data);
 
                     // Add the message to the ul list
                     var players = data.Players;
-                
+
                     for (i = 0; i < players.length; i++) {
-
                         var player = players[i];
-
                         if (player.id == id) {
 
                             var status = (player.alive) ? " Lever!" : " D&ouml;d!";
 
                             if (player.color == "#ABABAB")
-                                status = "Väntar...";
+                                status = "V&auml;ntar...";
 
                             var outputstring = player.name + "<br>" + status;
                             //  document.getElementById('main').innerHTML += output;
 
                             document.getElementById('main').style.backgroundColor = player.color;
-                            document.getElementById('main').innerHTML = outputstring;
+                            document.getElementById('action').innerHTML = outputstring;
 
                         }
                     }
@@ -134,7 +140,9 @@
             function connectMe() {
                 id = Math.round(Math.random() * 1000000 + 1);
              //   alert(id);
-                socket.emit('connectPlayer', {"id": id });
+                socket.emit('connectPlayer', { "id": id });
+              
+
             }
 
 
@@ -142,10 +150,14 @@
                 id = Math.round(Math.random() * 1000000 + 1);
                 myname =  document.getElementById('namn').value;
 
-                if (myname !="Your name" && myname != undefined && myname != "")
+                if (myname != "Your name" && myname != undefined && myname != "") {
                     socket.emit('connectPlayer', { "id": id, "name": myname });
-                else
+                    $("#action").show();
+                    $("#register").hide();
+                }
+                else {
                     document.getElementById('namn').style.borderColor = "red";
+                }
             }
 
             function clearIt() {
@@ -159,12 +171,18 @@
 	<body>
 		<div id="main" >
             
-            Bitchslap!<br />
-            
             <div id="register">
-                    <input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/><br />
+                    Bitchslap
+                    <input id="namn" type="text"  onfocus="clearIt(); return true;" name="namn" value="Your name"/>
                     <a href="javascript:joinMe()">Join</a>
             </div>
+
+
+            <div id="action">
+            
+            </div>
+
+
 
 		</div>
 	</body>
