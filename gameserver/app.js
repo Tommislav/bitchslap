@@ -11,6 +11,12 @@ var Game =
   IntervalId: 0,
   Tick:0,
   
+  ResetGame: function()
+  {
+	if (Game.Players.length > 0) {
+		Game.ReadyForNewGame();
+	}
+  },
   ReadyForNewGame: function() // after end game
   {
     console.log("---------> Ready for new round!!!");
@@ -276,5 +282,8 @@ io.sockets.on('connection', function (client) {
     client.on('onClick', function (id) {
       console.log("onClick id: "+id);
       Game.CheckTargetColor(id);
+    });
+	client.on('resetGame', function (data) {
+      Game.ResetGame();
     });
 });

@@ -77,7 +77,9 @@ Element.prototype.prependChild = function(child) { this.insertBefore(child, this
 		socket.emit('startGame', "");
 	}
 
-
+	function resetGame() {
+		socket.emit('resetGame',"");
+	}
 
 
 </script>
@@ -86,7 +88,9 @@ Element.prototype.prependChild = function(child) { this.insertBefore(child, this
 <a href="#" onclick="connectBatchPlayers()" />Connect batch of players (4)</a><br/>
 <a href="#" onclick="connectPlayer()" />Connect single player (req: id and name)</a><br/>
 <a href="#" onclick="startGame()" />Start game, when all players are connected</a><br/>
+<a href="#" onclick="resetGame()" />resetGame</a><br/>
 <a href="#" onclick="sendClick()" />onClick (req: id)</a><br/>
+
 
 
 <form action="">
