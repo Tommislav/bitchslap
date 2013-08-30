@@ -4,6 +4,19 @@
 <script>
     var socket = io.connect(Settings.ServerUrl);
 	var messageDiv;
+	var audio = {};
+	audio["snd1"] = new Audio();  
+	audio["snd2"] = new Audio();  
+	audio["snd3"] = new Audio();  
+	audio["snd4"] = new Audio();  
+	
+	$(document).ready(function(){
+	    audio["snd1"].src = "/snd/snd1.wav";
+	    audio["snd2"].src = "/snd/snd2.wav";
+	    audio["snd3"].src = "/snd/snd3.wav";
+	    audio["snd4"].src = "/snd/snd4.wav";
+	}
+	);
 
     // Called when client is connected to server
     socket.on('connect', function () {
@@ -51,8 +64,10 @@
             var missionColor = data.color;
             document.getElementById('messagediv').innerHTML = missionStatement;
             document.body.style.backgroundColor = missionColor;
+		
+			audio["snd1"].play();
+		    
 
-            // play annoying sound..
         });
 
         socket.on('gameEnd', function (data) {
@@ -62,7 +77,7 @@
 			$("#mainboard").hide();
 		   	$("#start_link").hide();
 			
-            //play majestic sound
+			audio["snd4"].play();
         });
 
         socket.on('readyForNewGame', function () {
@@ -72,9 +87,6 @@
 		   $("#no_players").show();
 		   $("#start_link").hide();
         });
-
-
-
     });
 
 
