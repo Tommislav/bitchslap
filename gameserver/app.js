@@ -90,6 +90,7 @@ var Game =
                   newColor = Game.ZombieColor.hex;                
                   console.log("ChanageToZombieColor() -> IF: Game.IsDeathMatchMode() -> IF: PlayerDontHaveZombieColor -> Player["+i+"].color = " + newColor)
                   Game.Players[i].color = newColor;
+                  return;
                 }                
              }
           }
@@ -235,6 +236,14 @@ app.get('/snd/snd2.wav', function (req, res) {
 });
 app.get('/snd/snd1.wav', function (req, res) {
     res.sendfile(__dirname + '/snd/snd1.wav');
+});
+
+//Graphic
+app.get('/bs_small.png', function (req, res) {
+    res.sendfile(__dirname + '/bs_small.png');
+});
+app.get('/bs_big.png', function (req, res) {
+    res.sendfile(__dirname + '/bs_big.png');
 });
 
 
