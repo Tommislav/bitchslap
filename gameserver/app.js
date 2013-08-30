@@ -34,6 +34,8 @@ var Game =
         nextTime = 4000;
       }
       
+      //if(Game.DeathMatchMode
+      
       console.log("==== update ("+Game.Tick+") =====, timeToNext: " + nextTime);
       
       clearInterval(Game.IntervalId);
@@ -188,6 +190,20 @@ app.get('/play', function (req, res) {
 app.get('/test', function (req, res) {
     res.sendfile(__dirname + '/test.html');
 });
+//Serve Sounds (snd)
+app.get('/snd/snd4.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd4.wav');
+});
+app.get('/snd/snd3.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd3.wav');
+});
+app.get('/snd/snd2.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd2.wav');
+});
+app.get('/snd/snd1.wav', function (req, res) {
+    res.sendfile(__dirname + '/snd/snd1.wav');
+});
+
 
 // Called when client connects
 io.sockets.on('connection', function (client) {
