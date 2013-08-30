@@ -20,13 +20,10 @@
 
         socket.on('playerStatus', function (data) {
 
-
-
-            console.log(data);
+            //console.log(data);
             // Add the message to the ul list
             var players = data.Players;
             document.getElementById('mainboard').innerHTML = "update from gameserver recieved";
-
 
             document.getElementById('mainboard').innerHTML = "<div>";
 
@@ -35,14 +32,12 @@
                 var status = (player.alive) ? "Lever!" : "D&ouml;d";
 
                 //var output = '<div style="float: left; width:150; height:150; background-color:' + player.color + ';">&nbsp;<!-- ' + player.id + ' --><br>' + status + '&nbsp;</div>';
-
-                var output = '<div style="text-align: center; float: left; width:150; height:150; background-color:' + player.color + ';">' + player.name + '<br>' + status + '&nbsp;</div>';
+                var output = '<div style="text-align: center; float: left;border: 1px solid #000000; width:150; height:150; background-color:' + player.color + ';">' + player.name + '<br>' + status + '&nbsp;</div>';
 
                 document.getElementById('mainboard').innerHTML += output;
             }
 
             document.getElementById('mainboard').innerHTML += '</div><div style="clear:left;">';
-
             document.getElementById('mainboard').innerHTML += "<br><br><hr><a href=\"javascript:startGame()\">Starta en runda</A></div>";
 
         });
@@ -50,16 +45,34 @@
 
 
         socket.on('updateMission', function (data) {
-
-
             var missionStatement = data.text;
             var missionColor = data.color;
-
             document.getElementById('messagediv').innerHTML = missionStatement;
+            document.body.style.backgroundColor = missionColor;
 
-            //document.bgColor = missionColor;
+            // play annoying sound..
+        });
+
+        socket.on('gameEnd', function (data) {
+            //visa vinnare
+            //data är ett playerobjekt 
+
+            var message = data.name + "har vunnit";
+
+            //play majestic sound
+        });
+
+        socket.on('readyForNewGame', function () {
+
+            //nolla diven med spelare
+            // visa länken?
+
+            document.getElementById('mainboard').innerHTML = "meh, joina igen då";
+
 
         });
+
+
 
     });
 
