@@ -40,6 +40,7 @@
             var players = data.Players;
 
 			$("#mainboard").show();
+			$("#messagediv").show();
             document.getElementById('mainboard').innerHTML = "<div>";
 
             for (i = 0; i < players.length; i++) {
@@ -74,6 +75,7 @@
 			$("#winner").text(data.name + " vann!");
 			$("#winner").show();
 			$("#messagediv").hide();
+			$("#messagediv").text("");
 			$("#mainboard").hide();
 		   	$("#start_link").hide();
 			
@@ -117,6 +119,10 @@
 		$("#start_link").hide();
         socket.emit('startGame');
     }
+	
+	function resetGame(){
+		socket.emit('resetGame');
+	}
 </script>
 
 
@@ -150,6 +156,8 @@ div#winner {
 }
 
 div#messagediv {
+	margin-top: 20px;
+	font-size: 60px;
 }
 
 div#start_link {
@@ -164,14 +172,26 @@ div#start_link a {
 	padding: 10px;
 	text-decoration: none;
 }
+
+div#reset_button {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+}
+
+div#reset_button a {
+	color: #fff;
+}
 </style>
 
 <body>
 
+	<img src="bs_big.png"  style="margin-bottom: 20px;"/>
 	<div id="winner">Stina vann!</div>
 	<div id="no_players">No players connected.</div>
 	<div id="mainboard"></div>
 	<div id="start_link"><a href="#" onclick="startGame();">Starta!</a></div>
 	<div id="messagediv"></div> 
+	<div id="reset_button"><a href="#" onclick="resetGame();">Återställ</a></div>
 </body>
 </html>
