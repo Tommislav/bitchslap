@@ -36,6 +36,11 @@
 			
 		}
 		
+		input 
+		{
+		    width: 50% !important;
+		}
+		
 		a 
 		{
 		    background-color: magenta;
@@ -57,7 +62,10 @@
 
 
         var socket = io.connect(Settings.ServerUrl);
-        $(document).on("vclick", "div#main", function () {
+        // $(document).on("vclick", "div#main", function () {
+       
+       
+        $(document).on("vmousedown", "div#main", function () {
             // changeColor(getRandomColor());
 
             if (id != undefined) {
